@@ -1,0 +1,1 @@
+CHANGE MASTER TO MASTER_HOST='master', MASTER_USER='slave_user', MASTER_PASSWORD='slave_pass';

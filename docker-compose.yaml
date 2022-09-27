@@ -1,0 +1,35 @@
+version: "3.5"
+services:
+   master:
+      build: ./docker/mysql
+      ports:
+        - "33061:3306"
+      environment:
+            MYSQL_ROOT_USER: ${MYSQL_MASTER_ROOT_USER}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_MASTER_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_MASTER_DATABASE}
+            MYSQL_USER: ${MYSQL_MASTER_USER}
+            MYSQL_PASSWORD: ${MYSQL_MASTER_PASSWORD}
+      volumes:
+        - ./docker/mysql/master.cnf:/etc/mysql/my.cnf
+        - ./docker/mysql/setup/master.sql:/docker-entrypoint-initdb.d/start.sql
+        - ./docker/mysql/setup/master.sql:/docker-entrypoint-initdb.d/setup.sql
+  #        - ./docker/mysql-main:/docker-entrypoint-initdb.d
+# mysql -h localhost -u maindb -pmaindb testdb
+   slave:
+      build: ./docker/mysql
+      ports:
+        - "33063:3306"
+      depends_on:
+        - master
+      environment:
+        MYSQL_ROOT_USER: ${MYSQL_SLAVE_ROOT_USER}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_SLAVE_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MYSQL_SLAVE_DATABASE}
+        MYSQL_USER: ${MYSQL_SLAVE_USER}
+        MYSQL_PASSWORD: ${MYSQL_SLAVE_PASSWORD}
+      volumes:
+        - ./docker/mysql/slave.cnf:/etc/mysql/my.cnf
+        - ./docker/mysql/setup/slave.sql:/docker-entrypoint-initdb.d/setup.sql
+        - ./docker/mysql/setup/slave.sql:/docker-entrypoint-initdb.d/start.sql
+#        - ./docker/mysql-replik:/docker-entrypoint-initdb.d
